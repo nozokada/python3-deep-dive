@@ -1,4 +1,5 @@
 import csv
+from collections import Counter
 
 
 def get_dict(file_name):
@@ -30,5 +31,9 @@ vehicles = get_dict('vehicles.csv')
 employment = get_dict('employment.csv')
 update_status = get_dict('update_status.csv')
 
-blah = combine(personal_info, [vehicles, employment, update_status])
-print(list(blah))
+data = combine(personal_info, [vehicles, employment, update_status])
+tickets_by_make = Counter()
+for entry in data:
+    tickets_by_make.update({entry['vehicle_make']: 1})
+
+print(tickets_by_make)
