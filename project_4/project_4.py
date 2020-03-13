@@ -1,4 +1,5 @@
 import csv
+import datetime
 from collections import Counter
 
 
@@ -26,14 +27,28 @@ def combine(primary_info, other_info):
         yield entry
 
 
+def count_tickets(data):
+    tickets_by_make = Counter()
+    for entry in data:
+        tickets_by_make.update({entry['vehicle_make']: 1})
+
+    print(tickets_by_make)
+
+
+def filter_stale_records(data):
+
+    def _(entry):
+        date = datetime.datetime.strptime(entry['last_updated'], '%Y-%m-%dT%H:%M:%SZ')
+        return date >= datetime.datetime.combine(datetime.date(2017, 3, 1), datetime.time())
+
+    return filter(_, data)
+
+
 personal_info = get_dict('personal_info.csv')
 vehicles = get_dict('vehicles.csv')
 employment = get_dict('employment.csv')
 update_status = get_dict('update_status.csv')
 
-data = combine(personal_info, [vehicles, employment, update_status])
-tickets_by_make = Counter()
-for entry in data:
-    tickets_by_make.update({entry['vehicle_make']: 1})
-
-print(tickets_by_make)
+all_data = combine(personal_info, [vehicles, employment, update_status])
+filtered_data = filter_stale_records(all_data)
+count_tickets(filtered_data)
