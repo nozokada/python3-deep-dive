@@ -32,7 +32,7 @@ def count_tickets(data):
     for entry in data:
         tickets_by_make.update({entry['vehicle_make']: 1})
 
-    print(tickets_by_make)
+    # print(tickets_by_make)
 
 
 def filter_stale_records(data):
@@ -44,6 +44,15 @@ def filter_stale_records(data):
     return filter(_, data)
 
 
+def filter_by_gender(data):
+
+    makes_by_gender = {'male': Counter(), 'female': Counter()}
+    for entry in data:
+        gender = entry['gender'].lower()
+        makes_by_gender[gender].update({entry['vehicle_make']: 1})
+    return makes_by_gender
+
+
 personal_info = get_dict('personal_info.csv')
 vehicles = get_dict('vehicles.csv')
 employment = get_dict('employment.csv')
@@ -51,4 +60,8 @@ update_status = get_dict('update_status.csv')
 
 all_data = combine(personal_info, [vehicles, employment, update_status])
 filtered_data = filter_stale_records(all_data)
-count_tickets(filtered_data)
+# count_tickets(filtered_data)
+
+gender_data = filter_by_gender(filtered_data)
+print(gender_data['male'])
+print(gender_data['female'])
